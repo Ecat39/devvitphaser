@@ -9,14 +9,25 @@ Devvit.configure({
 
 
 Devvit.addMenuItem({
-  label: 'Test',
+  label: 'Create Test Post (with Web View)',
   location: 'subreddit',
-  onPress: (event, context) => {
-    console.log(`Pressed ${event.targetId}`);
-    context.ui.showToast('Hello world!');
+  onPress: async (_event, context) => {
+    const { reddit, ui } = context;
+    const subreddit = await reddit.getCurrentSubreddit();
+    const post = await reddit.submitPost({
+      title: 'Hello World!',
+      subredditName: subreddit.name,
+      // The preview appears while the post loads
+      preview: (
+        <vstack height="100%" width="100%" alignment="middle center">
+          <text size="large">Loading ...</text>
+        </vstack>
+      ),
+    });
+    ui.showToast({ text: 'Created post!' });
+    ui.navigateTo(post);
   },
 });
-
 Devvit.addCustomPostType({
   name: 'Test Example',
   height: 'tall',
